@@ -1,0 +1,1 @@
+document.write("<p id='section'>Nothing interesting with this line, is just maded in JavaScript to see if it works</p>");

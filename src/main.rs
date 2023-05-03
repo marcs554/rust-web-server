@@ -1,44 +1,33 @@
-use std::{
-    fs,
-    net::{TcpListener, TcpStream},
-    io::{prelude::*, BufReader},
-    thread::spawn
-};
+#[macro_use] extern crate rocket;
+extern crate model;
+
+mod view;
+
+use crate::view::{static_files, gets};
+use rocket::{Config, config::LogLevel};
+use std::net::{IpAddr, Ipv4Addr};
+
+use rocket_dyn_templates::Template;
 
 
+#[launch]
+fn rocket() -> _ {
 
-fn main() {
-    let listener = TcpListener::bind("0.0.0.0:3000").unwrap();
-
-    for data in listener.incoming() {
-        let data = data.unwrap();
-
-        spawn(|| {
-            handler_conn(data);
-        });
-        
-    }
-}
-
-
-fn handler_conn(mut stream: TcpStream) {
-    let buf_reader = BufReader::new(&mut stream);
-    let http_request = buf_reader
-        .lines()
-        .next()
-        .unwrap()
-        .unwrap();
-
-    let (status_line, filename) = match &http_request[..] {
-        "GET / HTTP/1.1"            => ("HTTP/1.1 200 OK", "index"),
-        "GET /redirect HTTP/1.1"    => ("HTTP/1.1 301 MOVED PERMANENTLY", "301"),
-        _                           => ("HTTP/1.1 404 NOT FOUND", "404"),
+    let config = Config {
+        log_level: LogLevel::Normal,
+        address: IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)),
+        port: 8889,
+        ..Config::debug_default()
     };
 
-    
-    let content = fs::read_to_string(format!("public/{filename}.html")).unwrap();
-    let size_content = content.len();  
-    let response        = format!("{status_line}\r\nContent-Length: {size_content}\r\n\r\n{content}");
+    rocket::build()
+    .attach(Template::fairing())
+    .mount("/", routes![
+        gets::index, 
+        gets::data,
+        static_files::file,
+        ])
+    .register("/", catchers![gets::not_found])
+    .configure(config)
 
-    stream.write_all(response.as_bytes()).unwrap();
 }

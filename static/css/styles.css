@@ -1,0 +1,23 @@
+.debug {
+    border-color: red;
+    border-radius: 3pt;
+    border-style: dashed;
+}
+
+article {
+
+    width: 600pt;
+    height: 300pt;
+
+    margin-left: 250pt;
+}
+
+#main-title {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-style: oblique;
+    text-align: center;
+}
+
+#section {
+    font-size: 16pt;
+}

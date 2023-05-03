@@ -1,14 +1,11 @@
 [package]
-name = "rust-web-server"
+name = "model"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-model = { path = "model" }
 rocket = { version = "=0.5.0-rc.3", features = ["json"] }
+model = "0.1.0"
 
-[dependencies.rocket_dyn_templates]
-version = "=0.1.0-rc.3"
-features = ["handlebars", "tera"]
